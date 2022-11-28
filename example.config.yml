@@ -47,3 +47,7 @@ airgradient_sensors:
 
 # Starlink configuration. (Also requires `monitoring_enable`)
 starlink_enable: false
+
+# UPS NUT configuration. (Also requires `monitoring_enable`)
+nut_enable: false
+nut_server: localhost:3493

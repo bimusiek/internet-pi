@@ -1,0 +1,30 @@
+---
+- name: Clone prometheus-nut-exporter repo to Pi.
+  ansible.builtin.git:
+    repo: https://github.com/HON95/prometheus-nut-exporter.git
+    dest: "{{ config_dir }}/prometheus-nut-exporter/"
+    version: master
+    accept_hostkey: true
+  become: false
+  notify: Restart prometheus-nut-exporter
+
+- name: Copy UPS NUT docker-compose template to Pi.
+  ansible.builtin.template:
+    src: templates/ups-nut-docker-compose.yml.j2
+    dest: "{{ config_dir }}/prometheus-nut-exporter/docker-compose.yml"
+    mode: '0640'
+  become: false
+  notify: Restart prometheus-nut-exporter
+
+- name: Ensure UPS NUT Prometheus exporter is running.
+  community.docker.docker_compose:
+    project_src: "{{ config_dir }}/prometheus-nut-exporter/"
+    build: false
+  become: false
+
+- name: Copy UPS NUT dashboard config to grafana
+  ansible.builtin.copy:
+    src: files/nut_rev1.json
+    dest: "{{ config_dir }}/internet-monitoring/grafana/provisioning/dashboards/"
+    mode: 0644
+  become: false

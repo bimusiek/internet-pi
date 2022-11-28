@@ -81,6 +81,21 @@ scrape_configs:
       - targets: ['{{ pihole_hostname }}:9617']
 {% endif %}
 
+{% if nut_enable %}
+  - job_name: "nut"
+    static_configs:
+      - targets: ["{{ nut_server }}"]
+    metrics_path: /nut
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        # Insert NUT exporter address here
+        replacement: localhost:9995
+{% endif %}
+
 {% filter indent(width=2,first=True) %}
 {{ prometheus_extra_scrape_configs }}
 {% endfilter %}
